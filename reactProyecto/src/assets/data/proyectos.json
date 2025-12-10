@@ -4,7 +4,7 @@
     "title": "Roblox Game",
     "tech": "Lua",
     "description": "Juego desarrollado dentro de la plataforma Roblox utilizando el lenguaje Lua. Combina mecánicas de The Floor is Lava con elementos de carreras.",
-    "image": "/public/imagenes/ImagenRoblox.png",
+    "image": "/imagenes/ImagenRoblox.png",
     "alt": "Captura del juego Roblox"
   },
   {
