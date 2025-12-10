@@ -1,3 +1,13 @@
+// src/data/proyectos.js
+
+import ImagenRoblox from "/src/assets/data/imagenes/ImagenRoblox.png"
+import CalculadoraPRO from "/src/assets/data/imagenes/CalculadoraPRO.png"
+import BlogViaje from "/src/assets/data/imagenes/BlogViaje.png"
+import PaginaNetflix from "/src/assets/data/imagenes/PaginaNetflix.png"
+import TiendaZapas from "/src/assets/data/imagenes/TiendaZapas.png"
+import NicolauDatabase from "/src/assets/data/imagenes/NicolauDatabase.png"
+
+
 export const proyectosJs = [
     {
         "id": 1,
