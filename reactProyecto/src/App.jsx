@@ -6,7 +6,7 @@ import Footer from "/src/assets/complements/footer.jsx";
 import Newsletter from "/src/assets/complements/newsletter.jsx";
 import Articulos from "/src/assets/complements/articulos.jsx";
 import "/src/assets/CSS/styles.css";
-import { proyectosJs as proyectosData } from "/public/data/proyectos.js";
+import { proyectosJs as proyectosData } from "/src/assets/data/proyectos.js";
 
 export default function App() {
   const [proyectos] = useState(proyectosData); 
