@@ -449,3 +449,33 @@ footer {
 .project-search {
   margin-bottom: 2rem;
 }
+
+.newsletter-welcome {
+  width: 100%;
+  max-width: 480px;           
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  border-radius: 0.9rem;
+  background: var(--bg-elevated);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
+}
+
+.newsletter-welcome-title {
+  margin-bottom: 1rem;
+}
+
+.newsletter-welcome-item h3 {
+  margin-bottom: 0.25rem;
+}
+
+.newsletter-welcome-item p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.newsletter-welcome-divider {
+  height: 1px;
+  background: rgba(148, 163, 184, 0.25);
+  margin: 1rem 0;
+}

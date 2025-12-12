@@ -1,15 +1,20 @@
+import { useState } from "react";
+
 export default function Newsletter() {
+  const [showWelcome, setShowWelcome] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     alert("¡Newsletter activado!");
+    setShowWelcome(true);
   };
 
   return (
     <section id="newsletter">
       <h1>Newsletter mensual</h1>
       <p>
-        Suscribete al newsletter de <strong>DigitalEvolution S.A</strong> para recibir notificaciones.
+        Suscribete al newsletter de <strong>DigitalEvolution S.A</strong> para
+        recibir notificaciones.
       </p>
 
       <ul
@@ -44,6 +49,29 @@ export default function Newsletter() {
           Suscribirse
         </button>
       </form>
+
+      {showWelcome && (
+        <div className="newsletter-welcome">
+          <h3 className="newsletter-welcome-title">
+            Bienvenido a mi Newsletter
+          </h3>
+
+          <div className="newsletter-welcome-item">
+            <h3>Avance de la inteligencia artificial</h3>
+            <p>Las nuevas tecnologías dejan sin trabajo a muchas personas...</p>
+          </div>
+
+          <div className="newsletter-welcome-divider" />
+
+          <div className="newsletter-welcome-item">
+            <h3>Integración de base de datos</h3>
+            <p>
+              Nuestro nuevo software ya cuenta con base de datos y está casi
+              listo para salir al público...
+            </p>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
