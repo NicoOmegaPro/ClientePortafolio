@@ -14,7 +14,7 @@ export default function App() {
   useEffect(() => {
     const cargarProyectos = async () => {
       try {
-        const res = await fetch("/src/assets/data/proyectos.json");  //Fetch para cargar el JSON.
+        const res = await fetch("/data/proyectos.json");  //Fetch para cargar el JSON.
         if (!res.ok) {
           throw new Error("Error al cargar proyectos");
         }
