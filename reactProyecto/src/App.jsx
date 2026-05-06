@@ -21,7 +21,7 @@ export default function App() {
         const data = await res.json();
         setProyectos(data);
       } catch (error) {
-        console.error(error);
+        console.error(error); 213123123123
       }
     };
 
