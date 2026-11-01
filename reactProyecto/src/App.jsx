@@ -3,7 +3,6 @@ import Header from "/src/assets/complements/header.jsx";
 import Hero from "/src/assets/complements/hero.jsx";
 import Contacto from "/src/assets/complements/contacto.jsx";
 import Footer from "/src/assets/complements/footer.jsx";
-import Newsletter from "/src/assets/complements/newsletter.jsx";
 import Articulos from "/src/assets/complements/articulos.jsx";
 import "/src/assets/CSS/styles.css";
 
@@ -41,7 +40,7 @@ export default function App() {
   });
 
   useEffect(() => {
-    document.title = `DigitalEvolution · ${proyectos.length} projectes`;  //Uso de effect para actualizar el titulo de la pagina segun la cantidad de proyectos en data.
+    document.title = `Nicolau Negre · ${proyectos.length} proyectos`;  //Uso de effect para actualizar el titulo de la pagina segun la cantidad de proyectos en data.
   }, [proyectos.length]);
 
   return (
@@ -55,7 +54,6 @@ export default function App() {
           setBusqueda={setBusqueda}
         />
         <Contacto />
-        <Newsletter />
       </main>
       <Footer />
     </>
