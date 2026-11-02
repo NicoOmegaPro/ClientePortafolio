@@ -57,7 +57,7 @@ export default function Articulos({ proyectos, busqueda, setBusqueda }) {
 
             {otros.length > 0 && (
               <div className="projects-group">
-                <h3 className="group-title">Otros proyectos</h3>
+                <h3 className="group-title">Proyectos de formación</h3>
                 <div className="grid grid-3">{otros.map(pintarProyecto)}</div>
               </div>
             )}
