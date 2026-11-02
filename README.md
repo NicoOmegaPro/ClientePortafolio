@@ -31,7 +31,7 @@ Aquí enseño mis proyectos principales, los que he ido haciendo durante la form
 ## 🧱 Estructura
 
 ```
-ClientePortafolio/
+Portafolio/
 ├── public/
 │   ├── data/proyectos.json   Lista de proyectos
 │   └── imagenes/             Capturas de cada proyecto
