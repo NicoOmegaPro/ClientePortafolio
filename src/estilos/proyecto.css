@@ -1,0 +1,372 @@
+/* ==========================================================================
+   Ficha de cada proyecto (/proyectos/:slug) y página 404
+   ========================================================================== */
+
+.detalle { position: relative; }
+
+/* Barra de navegación entre proyectos */
+.migas {
+  align-items: center;
+  padding-block: 16px;
+  border-bottom: 1px solid var(--linea);
+}
+.migas > * { padding-inline: var(--pad); }
+.migas a { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
+.migas a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.migas svg { width: 16px; height: 16px; flex: none; }
+.migas__volver { grid-column: 1 / 4; }
+.migas p { grid-column: 4 / 10; }
+.migas__siguiente { grid-column: 10 / 13; justify-self: end; text-align: right; }
+
+/* Cabecera: el nombre enorme y la introducción al lado */
+.detalle__cabeza {
+  align-items: end;
+  padding-block: clamp(28px, 3vw, 56px) clamp(36px, 3.6vw, 64px);
+}
+.detalle__cabeza > * { padding-inline: var(--pad); }
+.detalle__titulo {
+  grid-column: 1 / 9;
+  margin-left: -0.04em;
+  /* El tamaño depende de las letras del nombre para que quepa en 8 columnas */
+  font-size: min(25vw, calc(62vw / (var(--letras) * 0.62)));
+  font-weight: 800;
+  font-stretch: 104%;
+  line-height: 0.78;
+  letter-spacing: -0.06em;
+  white-space: nowrap;
+}
+.detalle__intro { grid-column: 9 / 13; }
+
+/* Nombres largos: el título ocupa todo el ancho y la intro baja */
+.detalle__cabeza--largo { row-gap: clamp(28px, 3vw, 48px); }
+.detalle__cabeza--largo .detalle__titulo {
+  grid-column: 1 / -1;
+  font-size: clamp(56px, 8.6vw, 190px);
+  font-stretch: 96%;
+  line-height: 0.88;
+  white-space: normal;
+  text-wrap: balance;
+}
+.detalle__cabeza--largo .detalle__intro { grid-column: 7 / 13; }
+
+.detalle__intro > .mono { margin-bottom: 18px; }
+.detalle__lema {
+  font-size: clamp(22px, 2vw, 38px);
+  font-weight: 650;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+}
+.detalle__parrafo {
+  max-width: 56ch;
+  margin-top: 16px;
+  font-size: clamp(16px, 1.15vw, 19px);
+  line-height: 1.5;
+  color: var(--tinta-2);
+}
+.detalle__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px 26px;
+  margin-top: 30px;
+}
+
+/* Cifras grandes: el número manda y la etiqueta en mono lo explica.
+   Cada cifra ocupa tres filas compartidas (etiqueta, número y nota), así los
+   números de una misma fila quedan a la misma altura aunque una etiqueta sea más larga. */
+.cifras > div {
+  grid-column: span 3;
+  grid-row: span 3;
+  display: grid;
+  grid-template-rows: subgrid;
+  row-gap: 14px;
+  padding: 14px var(--pad) clamp(18px, 2vw, 32px);
+  border-top: 2px solid var(--tinta);
+}
+.cifras__valor {
+  margin-left: -0.04em;
+  font-size: clamp(64px, 7.4vw, 150px);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 0.8;
+  letter-spacing: -0.05em;
+  white-space: nowrap;
+}
+.cifras > div:first-child .cifras__valor::after {
+  content: "";
+  display: inline-block;
+  width: 0.15em;
+  height: 0.15em;
+  margin-left: 0.06em;
+  background: var(--senal);
+}
+.cifras__nota { font-size: 15px; color: var(--tinta-2); }
+/* Con tres cifras o menos, cada una ocupa más columnas */
+.cifras--3 > div { grid-column: span 4; }
+.cifras--2 > div { grid-column: span 6; }
+.cifras--1 > div { grid-column: 1 / -1; }
+
+.ficha { padding-bottom: clamp(28px, 3vw, 48px); }
+.ficha > div {
+  grid-column: span 3;
+  padding: 14px var(--pad) 0;
+  border-top: 1px solid var(--tinta);
+}
+.ficha--3 > div { grid-column: span 4; }
+.ficha--2 > div { grid-column: span 6; }
+.ficha dt { margin-bottom: 10px; }
+.ficha dd { font-size: clamp(16px, 1.15vw, 19px); font-weight: 550; line-height: 1.4; }
+
+/* Capturas ------------------------------------------------------------- */
+.figura__marco {
+  display: block;
+  overflow: hidden;
+  border: 1px solid var(--tinta);
+  background: var(--papel-2);
+  cursor: zoom-in;
+}
+.figura__marco img {
+  width: 100%;
+  max-height: 86vh;
+  object-fit: cover;
+  object-position: center top;
+}
+.figura figcaption {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 16px;
+  padding-top: 12px;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--tinta-2);
+}
+.figura figcaption > span:last-child { max-width: 72ch; }
+.figura figcaption .mono { color: var(--tinta); padding-top: 0.15em; }
+
+/* Capturas verticales de escritorio: el marco se ajusta a la imagen, sin franjas */
+.figura--vertical .figura__marco { width: fit-content; }
+.figura--vertical .figura__marco img { width: auto; height: auto; max-height: 80vh; object-fit: initial; }
+
+.detalle__portada { padding-bottom: clamp(56px, 6vw, 112px); }
+.detalle__portada .figura { grid-column: 1 / -1; padding-inline: var(--pad); }
+/* Las portadas 16:10 se ven enteras; las más altas se cortan limpias en 16:10 */
+.detalle__portada .figura:not(.figura--vertical) .figura__marco img {
+  max-height: max(86vh, calc((100vw - 2 * var(--m) - 2 * var(--pad)) * 0.63));
+}
+
+/* Secciones de texto: título a la izquierda, contenido a la derecha */
+.bloque { padding-bottom: clamp(56px, 6vw, 104px); }
+.bloque__fila { align-items: start; }
+.bloque__fila > * { padding-inline: var(--pad); }
+.bloque__cabeza {
+  grid-column: 1 / 5;
+  position: sticky;
+  top: calc(var(--alto-cabecera) + 20px);
+  padding-top: 14px;
+  border-top: 2px solid var(--tinta);
+}
+.bloque__cabeza h2 {
+  margin-top: 10px;
+  font-size: clamp(32px, 3.4vw, 64px);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+.bloque__cuerpo {
+  grid-column: 5 / 13;
+  padding-top: 14px;
+  border-top: 1px solid var(--tinta);
+}
+
+.texto-largo {
+  display: grid;
+  gap: 1em;
+  max-width: 60ch;
+  font-size: clamp(17px, 1.25vw, 21px);
+  line-height: 1.55;
+}
+.texto-largo--destacado {
+  font-size: clamp(19px, 1.55vw, 26px);
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+
+.funciones {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 calc(var(--pad) * 2);
+}
+.funciones li, .retos li { padding-block: 4px 26px; }
+.funciones li:nth-child(n + 3) { border-top: 1px solid var(--linea); padding-top: 18px; }
+.funciones h3, .retos h3 {
+  margin-top: 8px;
+  font-size: clamp(19px, 1.45vw, 25px);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+.funciones p, .retos p {
+  max-width: 60ch;
+  margin-top: 10px;
+  font-size: clamp(15.5px, 1.05vw, 17.5px);
+  line-height: 1.55;
+  color: var(--tinta-2);
+}
+.retos { display: grid; }
+.retos li + li { border-top: 1px solid var(--linea); padding-top: 18px; }
+
+/* Capturas intercaladas entre secciones, alternando el lado */
+.capturas {
+  display: grid;
+  gap: clamp(40px, 4vw, 72px);
+  padding-top: clamp(40px, 4vw, 72px);
+}
+.captura .figura { grid-column: 1 / 10; padding-inline: var(--pad); }
+.captura--derecha .figura { grid-column: 4 / 13; }
+
+.capturas-movil {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: calc(var(--pad) * 2);
+}
+.figura--movil .figura__marco img { max-height: none; }
+.figura--movil figcaption { grid-template-columns: 1fr; gap: 6px; }
+/* Si solo hay una captura de móvil, el pie va a su lado y no queda un hueco */
+.capturas-movil > .figura:only-child {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: calc(var(--pad) * 2);
+  align-items: end;
+}
+
+/* Enlace grande al siguiente proyecto */
+.siguiente {
+  position: relative;
+  display: block;
+  margin-top: clamp(32px, 4vw, 64px);
+  border-top: 2px solid var(--tinta);
+  text-decoration: none;
+  background: linear-gradient(var(--tinta), var(--tinta)) no-repeat left / 0% 100%;
+  transition: background-size 0.5s var(--curva), color 0.3s;
+}
+.siguiente > .fila { align-items: end; padding-block: clamp(28px, 3vw, 48px) clamp(36px, 4vw, 64px); }
+.siguiente > .fila > * { padding-inline: var(--pad); }
+.siguiente__rotulo { grid-column: 1 / 4; padding-bottom: 0.8em; }
+.siguiente__titulo {
+  grid-column: 4 / 12;
+  font-size: clamp(48px, 8vw, 170px);
+  font-weight: 800;
+  line-height: 0.85;
+  letter-spacing: -0.055em;
+}
+/* La flecha no lleva el relleno lateral de las celdas: con él se dibujaría diminuta */
+.siguiente > .fila > svg {
+  grid-column: 12 / 13;
+  justify-self: end;
+  width: clamp(32px, 4vw, 64px);
+  height: clamp(32px, 4vw, 64px);
+  padding-inline: 0;
+  margin-inline-end: var(--pad);
+  transition: transform 0.4s var(--curva);
+}
+.siguiente:hover,
+.siguiente:focus-visible { background-size: 100% 100%; color: var(--papel); }
+.siguiente:hover svg,
+.siguiente:focus-visible svg { transform: translateX(8px); color: var(--senal); }
+/* El contorno va por dentro: por fuera se saldría de la pantalla */
+.siguiente:focus-visible { outline-color: var(--senal); outline-offset: -8px; }
+
+/* 404 ------------------------------------------------------------------ */
+.no-encontrado {
+  padding-block: clamp(64px, 10vw, 180px);
+  row-gap: 24px;
+}
+.no-encontrado > * { grid-column: 1 / -1; padding-inline: var(--pad); }
+.no-encontrado__titulo {
+  font-size: clamp(56px, 10vw, 220px);
+  font-weight: 800;
+  line-height: 0.85;
+  letter-spacing: -0.055em;
+}
+.no-encontrado__texto { max-width: 46ch; font-size: clamp(18px, 1.4vw, 24px); }
+
+/* --------------------------------------------------------------------------
+   Pantallas grandes: la portada no se estira más allá de diez columnas
+   -------------------------------------------------------------------------- */
+@media (min-width: 1800px) {
+  .detalle__portada .figura { grid-column: 2 / 12; }
+}
+
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .migas p { grid-column: 4 / 8; }
+  .migas__siguiente { grid-column: 8 / 13; }
+}
+
+/* En escritorio, las capturas verticales llevan el pie al lado en vez de debajo,
+   para no dejar un hueco vacío del alto de la imagen */
+@media (min-width: 1024px) {
+  .figura--vertical {
+    display: grid;
+    grid-template-columns: auto minmax(0, 36ch);
+    justify-content: start;
+    column-gap: calc(var(--pad) * 2);
+    align-items: end;
+  }
+  .figura--vertical figcaption { grid-template-columns: 1fr; gap: 6px; }
+  .captura--derecha .figura--vertical { justify-self: end; }
+}
+
+/* --------------------------------------------------------------------------
+   Pantallas pequeñas
+   -------------------------------------------------------------------------- */
+@media (max-width: 1023px) {
+  .migas__volver { grid-column: 1 / 3; }
+  .migas p { display: none; }
+  .migas__siguiente { grid-column: 3 / 5; }
+
+  .detalle__titulo { grid-column: 1 / 5; font-size: min(32vw, calc(88vw / (var(--letras) * 0.62))); }
+  .detalle__intro,
+  .detalle__cabeza--largo .detalle__intro { grid-column: 1 / 5; margin-top: 26px; }
+  .detalle__cabeza--largo .detalle__titulo { font-size: clamp(44px, 12vw, 120px); }
+
+  .cifras { row-gap: 0; }
+  .cifras > div,
+  .cifras--3 > div,
+  .cifras--2 > div { grid-column: span 2; }
+  /* Con tres cifras, la tercera ocupa toda la fila para no dejar media vacía */
+  .cifras--3 > div:last-child { grid-column: 1 / -1; }
+  .cifras__valor { font-size: 15vw; }
+  .ficha { row-gap: 18px; padding-top: 18px; }
+  .ficha > div,
+  .ficha--3 > div,
+  .ficha--2 > div { grid-column: 1 / 5; }
+
+  .bloque__cabeza { grid-column: 1 / 5; position: static; }
+  .bloque__cuerpo { grid-column: 1 / 5; border-top: 0; }
+  .funciones { grid-template-columns: 1fr; }
+  .funciones li:nth-child(n + 2) { border-top: 1px solid var(--linea); padding-top: 18px; }
+
+  .captura .figura, .captura--derecha .figura { grid-column: 1 / 5; }
+  .figura figcaption { grid-template-columns: 1fr; gap: 6px; }
+  .capturas-movil { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .capturas-movil > .figura:only-child { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+
+  .siguiente__rotulo { grid-column: 1 / 5; }
+  .siguiente__titulo { grid-column: 1 / 4; font-size: 12vw; }
+  .siguiente > .fila > svg { grid-column: 4 / 5; }
+}
+
+/* En móviles las migas se quedan en "Proyectos" y el nombre del siguiente;
+   el resto de palabras se oculta a la vista pero lo siguen leyendo los lectores de pantalla */
+@media (max-width: 479px) {
+  .migas .solo-ancho {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}

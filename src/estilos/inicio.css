@@ -1,0 +1,560 @@
+/* ==========================================================================
+   Portada: presentación, sobre mí, experiencia y proyectos
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Presentación
+   -------------------------------------------------------------------------- */
+.presentacion {
+  position: relative;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  min-height: calc(100svh - var(--alto-cabecera));
+}
+
+.presentacion__escenario { position: relative; }
+
+/* Campo de celdas: un lienzo quieto (la trama) y otro con la estela */
+.campo {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.campo canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.presentacion__contenido {
+  height: 100%;
+  grid-template-rows: auto 1fr;
+  padding-block: 18px clamp(24px, 3vw, 44px);
+}
+.presentacion__contenido > * { padding-inline: var(--pad); }
+
+.presentacion__etiqueta { grid-column: 1 / 5; }
+.presentacion__lugar { grid-column: 10 / 13; }
+
+.presentacion__nombre {
+  grid-column: 1 / 10;
+  grid-row: 2;
+  align-self: end;
+  margin-left: -0.04em; /* compensa el lateral de la N para que caiga en la línea */
+  font-size: clamp(60px, 14.6vw, 330px);
+  font-weight: 800;
+  font-stretch: 96%;
+  line-height: 0.86;
+  letter-spacing: -0.055em;
+}
+/* Cada palabra en su línea y sin partirse, también con la fuente de reserva */
+.presentacion__nombre > span { display: block; white-space: nowrap; }
+/* Un poco de aire para que la «g» de Negre no toque la «d» de Rodríguez */
+.presentacion__nombre > span:last-child { margin-top: 0.1em; }
+
+.presentacion__foto {
+  grid-column: 10 / 13;
+  grid-row: 2;
+  align-self: end;
+  margin-top: 28px;
+  padding-inline: 0; /* la foto va de línea a línea */
+}
+.presentacion__foto img {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  object-position: center top;
+  background: var(--papel-2);
+}
+.presentacion__foto figcaption {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px var(--pad) 0;
+}
+
+.presentacion__barra {
+  position: relative;
+  background: var(--papel);
+  border-top: 1px solid var(--tinta);
+}
+.presentacion__barra .celda {
+  grid-column: span 3;
+  padding: 18px var(--pad) 26px;
+}
+.presentacion__barra .mono { margin-bottom: 10px; }
+.dato-grande {
+  font-size: clamp(19px, 1.6vw, 28px);
+  font-weight: 650;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+}
+.dato-texto {
+  margin-top: 6px;
+  max-width: 32ch;
+  font-size: clamp(15px, 1.05vw, 18px);
+  line-height: 1.35;
+  color: var(--tinta-2);
+}
+.presentacion__acciones {
+  display: flex;
+  align-items: center;
+  align-self: center;
+  flex-wrap: wrap;
+  gap: 14px 24px;
+}
+
+/* En portátiles con poca altura, el nombre y la foto se ajustan para que la
+   barra con el botón quepa en la primera pantalla */
+@media (min-width: 1024px) {
+  .presentacion__nombre { font-size: clamp(60px, min(14.6vw, calc((100svh - 300px) / 2.6)), 330px); }
+  .presentacion__foto img { max-height: calc(100svh - 330px); }
+}
+
+/* --------------------------------------------------------------------------
+   01 · Sobre mí
+   -------------------------------------------------------------------------- */
+.sobre { row-gap: clamp(48px, 5vw, 88px); }
+.sobre > * { padding-inline: var(--pad); }
+.sobre__rotulo { grid-column: 1 / 3; padding-top: 0.6em; }
+
+.sobre__lema {
+  grid-column: 3 / 12;
+  font-size: clamp(28px, 3.7vw, 74px);
+  font-weight: 500;
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+.sobre__lema em {
+  font-style: normal;
+  background: linear-gradient(var(--senal), var(--senal)) no-repeat 0 92% / 100% 0.13em;
+}
+
+.sobre__texto {
+  grid-column: 3 / 10;
+  display: grid;
+  gap: 1em;
+  font-size: clamp(17px, 1.25vw, 21px);
+  line-height: 1.5;
+}
+.sobre__texto p { max-width: 60ch; }
+
+.datos {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  padding-inline: 0;
+}
+.datos > div {
+  grid-column: span 4;
+  padding: 14px var(--pad) 0;
+  border-top: 1px solid var(--tinta);
+}
+.datos dt { margin-bottom: 12px; }
+.datos dd { font-size: clamp(17px, 1.3vw, 22px); font-weight: 600; line-height: 1.3; letter-spacing: -0.01em; }
+.datos dd + dd { margin-top: 4px; font-size: clamp(15px, 1.05vw, 18px); font-weight: 400; color: var(--tinta-2); }
+
+.herramientas {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  padding-inline: 0;
+}
+.herramientas__rotulo { grid-column: 1 / 3; padding: 14px var(--pad) 0; }
+.herramientas__grupo { grid-column: span 2; padding-inline: var(--pad); }
+.herramientas__grupo h3 {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 0 12px;
+  border-top: 1px solid var(--tinta);
+}
+.herramientas__grupo li {
+  padding: 9px 0;
+  border-top: 1px solid var(--linea);
+  font-size: clamp(16px, 1.25vw, 21px);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+/* --------------------------------------------------------------------------
+   02 · Experiencia, sobre verde bosque
+   -------------------------------------------------------------------------- */
+.bosque { background: var(--bosque); color: var(--papel); }
+.bosque .suave { color: var(--bosque-suave); }
+.experiencia { padding-bottom: clamp(56px, 5vw, 96px); }
+
+.trabajo {
+  align-items: start;
+  padding-block: 28px 34px;
+  border-top: 1px solid rgba(241, 237, 228, 0.35);
+}
+.trabajo > * { padding-inline: var(--pad); }
+.trabajo__fecha { grid-column: 1 / 3; padding-top: 0.6em; white-space: nowrap; }
+.trabajo__fecha::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 10px;
+  background: var(--senal);
+}
+.trabajo__empresa {
+  grid-column: 3 / 7;
+  font-size: clamp(30px, 3.4vw, 64px);
+  font-weight: 750;
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+}
+.trabajo__puesto {
+  grid-column: 7 / 10;
+  padding-top: 0.3em;
+  font-size: clamp(17px, 1.25vw, 21px);
+  font-weight: 600;
+  line-height: 1.3;
+}
+.trabajo__puesto .mono { display: block; margin-top: 10px; font-weight: 400; }
+.trabajo__texto {
+  grid-column: 10 / 13;
+  max-width: 56ch;
+  padding-top: 0.35em;
+  font-size: clamp(15px, 1.1vw, 18px);
+  line-height: 1.45;
+}
+
+.estudios {
+  align-items: start;
+  padding-top: 28px;
+  border-top: 1px solid rgba(241, 237, 228, 0.35);
+}
+.estudios > * { padding-inline: var(--pad); }
+.estudios__rotulo { grid-column: 1 / 3; padding-top: 0.4em; }
+.estudios__lista {
+  grid-column: 3 / 13;
+  display: grid;
+  grid-template-columns: subgrid;
+  padding-inline: 0;
+}
+.estudios__lista li {
+  grid-column: span 5;
+  display: grid;
+  gap: 4px;
+  padding-inline: var(--pad);
+}
+.estudios__lista strong { font-size: clamp(19px, 1.5vw, 26px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; }
+
+/* --------------------------------------------------------------------------
+   03 · Proyectos
+   -------------------------------------------------------------------------- */
+.buscador {
+  align-items: center;
+  padding-bottom: clamp(36px, 4vw, 64px);
+}
+.buscador > * { padding-inline: var(--pad); }
+.buscador__rotulo { grid-column: 1 / 2; }
+.buscador__campo {
+  grid-column: 2 / 8;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 2px solid var(--tinta);
+}
+.buscador__campo svg { width: 22px; height: 22px; flex: none; }
+.buscador__campo input {
+  width: 100%;
+  min-width: 0;
+  padding: 10px 0;
+  border: 0;
+  background: transparent;
+  color: var(--tinta);
+  font: inherit;
+  font-size: clamp(18px, 1.5vw, 24px);
+  font-weight: 500;
+}
+.buscador__campo input::placeholder { color: var(--tinta-2); opacity: 1; }
+.buscador__campo input:focus { outline: none; }
+/* La x para borrar: dos líneas rectas en tinta en vez del icono azul del navegador */
+.buscador__campo input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  background:
+    linear-gradient(45deg, transparent 44%, var(--tinta) 44% 56%, transparent 56%),
+    linear-gradient(-45deg, transparent 44%, var(--tinta) 44% 56%, transparent 56%);
+}
+.buscador__campo:focus-within { border-bottom-color: var(--senal); }
+.buscador__total { grid-column: 9 / 13; justify-self: end; }
+
+.grupo__titulo {
+  position: relative;
+  z-index: 1;
+  padding: 0 var(--pad) 14px calc(var(--m) + var(--pad));
+}
+
+/* Proyectos principales ----------------------------------------------- */
+.destacado {
+  position: relative;
+  align-items: start;
+  margin-bottom: clamp(56px, 6vw, 112px);
+}
+/* La caja de la captura mantiene su 16:10 aunque el texto de al lado sea más alto,
+   así no se recorta por los lados */
+.destacado__media {
+  grid-column: 1 / 9;
+  grid-row: 1;
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--tinta);
+  border: 1px solid var(--tinta);
+}
+.destacado--invertido .destacado__media { grid-column: 5 / 13; }
+.destacado__media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top; /* las capturas se recortan por abajo, nunca por arriba */
+  transition: transform 0.6s var(--curva);
+}
+.destacado:hover .destacado__media img { transform: scale(1.025); }
+
+.destacado__texto {
+  grid-column: 9 / 13;
+  grid-row: 1;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  padding-inline: var(--pad);
+  border-top: 1px solid var(--tinta);
+}
+.destacado--invertido .destacado__texto { grid-column: 1 / 5; }
+
+.destacado__meta { display: flex; justify-content: space-between; padding-top: 12px; }
+.destacado__titulo {
+  margin-top: clamp(28px, 3vw, 56px);
+  margin-left: -0.03em;
+  font-size: clamp(52px, 5.6vw, 118px);
+  font-weight: 800;
+  font-stretch: 94%;
+  line-height: 0.85;
+  letter-spacing: -0.055em;
+}
+.destacado__titulo a { text-decoration: none; }
+/* El enlace del título cubre toda la tarjeta */
+.destacado__titulo a::after { content: ""; position: absolute; inset: 0; z-index: 3; }
+.destacado__titulo a:focus-visible { outline: none; }
+.destacado:focus-within { outline: 2px solid var(--tinta); outline-offset: 6px; }
+.destacado__titulo .cuadro {
+  transform: scale(0);
+  transform-origin: left bottom;
+  transition: transform 0.3s var(--curva);
+}
+.destacado:hover .destacado__titulo .cuadro,
+.destacado:focus-within .destacado__titulo .cuadro { transform: scale(1); }
+
+.destacado__lema {
+  margin-top: clamp(18px, 1.8vw, 28px);
+  max-width: 34ch;
+  font-size: clamp(17px, 1.3vw, 22px);
+  font-weight: 550;
+  line-height: 1.3;
+}
+
+/* Lo que incluye el proyecto, numerado como un índice */
+.incluye { margin-top: clamp(20px, 2vw, 32px); counter-reset: punto; }
+.incluye li {
+  display: grid;
+  grid-template-columns: 3.2em 1fr;
+  padding: 8px 0 9px;
+  border-top: 1px solid var(--linea);
+  font-size: clamp(15px, 1.05vw, 17px);
+  line-height: 1.35;
+  counter-increment: punto;
+}
+.incluye li:last-child { border-bottom: 1px solid var(--linea); }
+.incluye li::before {
+  content: counter(punto, decimal-leading-zero);
+  padding-top: 0.2em;
+  font-family: var(--f-mono);
+  font-size: 11.5px;
+  color: var(--tinta-2);
+}
+
+.destacado .etiquetas { margin-block: 22px 28px; }
+
+.destacado__abrir {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  margin-right: calc(var(--pad) * -1);
+  padding: 16px var(--pad) 16px 0;
+  border-block: 1px solid var(--tinta);
+  font-size: 17px;
+  font-weight: 650;
+  background: linear-gradient(var(--senal), var(--senal)) no-repeat left / 0% 100%;
+  transition: background-size 0.35s var(--curva), padding 0.35s var(--curva);
+}
+.destacado__abrir svg { width: 22px; height: 22px; transition: transform 0.35s var(--curva); }
+.destacado:hover .destacado__abrir,
+.destacado:focus-within .destacado__abrir { background-size: 100% 100%; padding-left: var(--pad); }
+.destacado:hover .destacado__abrir svg { transform: translateX(-4px) rotate(-45deg); }
+
+/* Proyectos de formación ---------------------------------------------- */
+.grupo--formacion { padding-top: clamp(24px, 3vw, 48px); }
+.grupo__cabeza {
+  align-items: end;
+  padding-bottom: clamp(28px, 3vw, 48px);
+}
+.grupo__cabeza > * { padding-inline: var(--pad); }
+.grupo__titulo-grande {
+  grid-column: 1 / 8;
+  font-size: clamp(36px, 4.2vw, 88px);
+  font-weight: 800;
+  line-height: 0.92;
+  letter-spacing: -0.045em;
+}
+.grupo__nota {
+  grid-column: 9 / 13;
+  max-width: 52ch;
+  font-size: clamp(15px, 1.1vw, 18px);
+  line-height: 1.45;
+  color: var(--tinta-2);
+}
+
+.rejilla-tarjetas { row-gap: clamp(32px, 3.4vw, 56px); }
+.tarjeta { grid-column: span 4; padding-inline: var(--pad); }
+.tarjeta__enlace {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  text-decoration: none;
+}
+.tarjeta__imagen {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border: 1px solid var(--tinta);
+  background: var(--papel-2);
+}
+.tarjeta__imagen img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  transition: transform 0.5s var(--curva);
+}
+.tarjeta__enlace:hover .tarjeta__imagen img { transform: scale(1.03); }
+/* Capturas verticales: enteras y centradas sobre el papel, sin recortar */
+.tarjeta__imagen--vertical img { object-fit: contain; object-position: center; padding-block: 12px; }
+.tarjeta__meta { display: flex; justify-content: space-between; padding-top: 14px; }
+.tarjeta__titulo {
+  margin-top: 10px;
+  font-size: clamp(22px, 1.9vw, 34px);
+  font-weight: 750;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+.tarjeta__texto {
+  margin-top: 10px;
+  margin-bottom: 18px; /* el pie baja al fondo con margin-top: auto y quedan alineados en cada fila */
+  max-width: 48ch;
+  font-size: clamp(15px, 1.05vw, 17px);
+  line-height: 1.45;
+  color: var(--tinta-2);
+}
+.tarjeta__pie {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: auto;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--tinta);
+  background: linear-gradient(var(--senal), var(--senal)) no-repeat left / 0% 100%;
+  transition: background-size 0.35s var(--curva), padding 0.35s var(--curva);
+}
+.tarjeta__pie svg { width: 20px; height: 20px; flex: none; transition: transform 0.35s var(--curva); }
+.tarjeta__enlace:hover .tarjeta__pie,
+.tarjeta__enlace:focus-visible .tarjeta__pie { background-size: 100% 100%; padding-inline: 10px; }
+.tarjeta__enlace:hover .tarjeta__pie svg { transform: rotate(-45deg); }
+
+/* --------------------------------------------------------------------------
+   Portátiles estrechos: la fecha de RIU no cabe en una línea
+   -------------------------------------------------------------------------- */
+@media (min-width: 1024px) and (max-width: 1199px) {
+  .trabajo__fecha { white-space: normal; padding-left: calc(var(--pad) + 18px); text-indent: -18px; }
+}
+
+/* --------------------------------------------------------------------------
+   Pantallas pequeñas: 4 columnas y todo apilado
+   -------------------------------------------------------------------------- */
+@media (max-width: 1023px) {
+  .presentacion { min-height: 0; }
+  .presentacion__contenido { padding-block: 14px 24px; row-gap: 22px; }
+  .presentacion__etiqueta { grid-column: 1 / 3; }
+  .presentacion__lugar { grid-column: 3 / 5; text-align: right; }
+  .presentacion__nombre { grid-column: 1 / 5; font-size: 18.4vw; }
+  /* En móvil la foto va justo después del nombre */
+  .presentacion__foto { grid-column: 2 / 5; grid-row: 3; margin-top: 0; }
+  .presentacion__barra .celda { grid-column: 1 / 5; padding-block: 16px 20px; }
+  .presentacion__barra .celda + .celda { border-top: 1px solid var(--linea); }
+  .presentacion__barra .presentacion__acciones { padding-block: 22px 30px; }
+
+  .sobre__rotulo, .sobre__lema, .sobre__texto { grid-column: 1 / 5; }
+  .datos { row-gap: 18px; }
+  .datos > div { grid-column: 1 / 5; padding-bottom: 6px; }
+  .herramientas { row-gap: 22px; }
+  .herramientas__rotulo { grid-column: 1 / 5; }
+  .herramientas__grupo { grid-column: span 2; }
+
+  .trabajo { row-gap: 12px; }
+  .trabajo__fecha, .trabajo__empresa, .trabajo__puesto, .trabajo__texto { grid-column: 1 / 5; }
+  .estudios { row-gap: 16px; }
+  .estudios__rotulo, .estudios__lista { grid-column: 1 / 5; }
+  .estudios__lista { row-gap: 18px; }
+  .estudios__lista li { grid-column: 1 / 5; }
+
+  .buscador { row-gap: 10px; }
+  .buscador__rotulo { grid-column: 1 / 3; }
+  .buscador__total { grid-column: 3 / 5; }
+  .buscador__campo { grid-column: 1 / 5; grid-row: 2; margin-inline: var(--pad); padding-inline: 0; }
+
+  .destacado__media, .destacado--invertido .destacado__media { grid-column: 1 / 5; grid-row: 1; }
+  .destacado__texto, .destacado--invertido .destacado__texto { grid-column: 1 / 5; grid-row: 2; border-top: 0; }
+  .destacado__titulo { margin-top: 18px; }
+  .destacado__abrir { margin-top: 26px; }
+
+  .grupo__titulo-grande, .grupo__nota { grid-column: 1 / 5; }
+  .grupo__nota { margin-top: 16px; }
+  .tarjeta { grid-column: span 2; }
+}
+
+/* Tabletas: la foto y los datos se reparten en dos columnas en vez de estirarse */
+@media (min-width: 600px) and (max-width: 1023px) {
+  .presentacion__foto { grid-column: 3 / 5; }
+  .presentacion__barra .celda { grid-column: span 2; }
+  .presentacion__barra .celda:nth-child(2) { border-top: 0; }
+  /* La celda del botón ocupa toda la altura de su fila para que la raya de arriba no haga escalón */
+  .presentacion__barra .presentacion__acciones { align-self: stretch; }
+  .datos > div { grid-column: span 2; }
+}
+
+@media (max-width: 599px) {
+  .tarjeta { grid-column: 1 / 5; }
+}
+
+/* Móviles muy estrechos: las etiquetas de arriba caben en una línea */
+@media (max-width: 359px) {
+  .presentacion__etiqueta,
+  .presentacion__lugar,
+  .presentacion__foto figcaption { font-size: 11px; letter-spacing: 0; }
+  .presentacion__foto figcaption span { white-space: nowrap; }
+}

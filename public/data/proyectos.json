@@ -1,74 +1,785 @@
 [
   {
-    "id": 1,
-    "title": "Noir",
-    "tech": "React · Node.js · Express · Prisma · PostgreSQL · Docker",
-    "description": "Gestor de proyectos e incidencias tipo Jira: tablero Kanban con arrastrar y soltar, sprints, subtareas, equipos con roles, notificaciones y panel de estadísticas.",
-    "image": "/imagenes/noir.jpg",
-    "alt": "Logotipo de Noir",
+    "slug": "noir",
+    "titulo": "Noir",
+    "destacado": true,
+    "lema": "Gestor de proyectos tipo Jira con tablero Kanban, sprints y equipos con roles",
+    "anio": "2026",
+    "tipo": "Proyecto final de ciclo (CFGS DAW)",
+    "papel": "Individual: base de datos, API REST, frontend en React y Dockerfiles",
+    "tecnologias": [
+      "React 19",
+      "Vite",
+      "Tailwind CSS 4",
+      "React Router",
+      "dnd-kit",
+      "Chart.js",
+      "date-fns",
+      "Node.js",
+      "Express",
+      "Prisma",
+      "PostgreSQL",
+      "Zod",
+      "JWT",
+      "bcrypt",
+      "Multer",
+      "EJS",
+      "Docker",
+      "Nginx"
+    ],
+    "resumen": "Los equipos planifican las tareas en sprints, las mueven por un tablero Kanban arrastrando las tarjetas de una columna a otra y siguen el avance con gráficas. Por detrás hay una API REST en Express con Prisma y PostgreSQL que, en las rutas de proyectos y tareas, comprueba si perteneces a alguno de los equipos del proyecto y con qué rol.",
+    "contexto": "Lo empecé en mayo de 2026 como proyecto final del ciclo en el IES Emili Darder y lo seguí mejorando hasta julio. La idea era una herramienta en la que varios equipos colaboran en los mismos proyectos y cada persona puede hacer unas cosas u otras según su rol: el jefe de equipo crea proyectos e invita gente, el supervisor revisa y cierra tareas, y el miembro trabaja en ellas. Tomé Jira como referencia para el flujo de trabajo (estados, prioridades, sprints y subtareas) y le di una identidad propia con un tema oscuro.",
+    "funciones": [
+      {
+        "titulo": "Tablero Kanban con arrastrar y soltar",
+        "texto": "Cuatro columnas (Pendiente, En progreso, En revisión y Finalizado) hechas con dnd-kit. Al soltar una tarjeta cambio su estado en pantalla al momento y después llamo a la API. Si el servidor rechaza el cambio, muestro el error en un aviso y recargo el proyecto para volver al estado real. Cada tarjeta enseña etiquetas, prioridad, responsable, fecha de vencimiento (en rojo si ya ha vencido y en amarillo si vence hoy) y contadores de subtareas, comentarios y adjuntos."
+      },
+      {
+        "titulo": "Detalle de cada tarea",
+        "texto": "Al abrir una tarjeta aparece un modal con el título y la descripción editables en el sitio, subtareas con barra de progreso, comentarios y adjuntos subidos con Multer (imágenes, PDF, Word o texto, hasta 10 MB). A la derecha hay un panel para cambiar estado, prioridad, etiquetas, responsable, sprint y fecha de vencimiento sin salir de la tarea."
+      },
+      {
+        "titulo": "Sprints, filtros y gráficas por proyecto",
+        "texto": "Jefes y supervisores crean sprints con fecha de inicio y fin. En la vista del proyecto se combinan filtros por sprint, texto, prioridad y responsable, que se aplican en el navegador sobre las tareas ya cargadas. Dos gráficas de Chart.js muestran cuántas tareas hay por prioridad y por estado. Al pulsar un estado en la leyenda del gráfico de anillo se resalta ese tramo y aparece su porcentaje en el centro."
+      },
+      {
+        "titulo": "Equipos con roles e invitaciones",
+        "texto": "Quien crea un equipo queda como jefe. Invita a otros usuarios por correo, la invitación les llega como notificación con botones para aceptar o rechazar, y después puede ascenderlos a supervisor o expulsarlos. Cada proyecto pertenece a un equipo. Su jefe puede buscar otros equipos por nombre y añadirlos al proyecto como colaboradores, y las personas de esos equipos entran en el proyecto con rol de miembro."
+      },
+      {
+        "titulo": "Permisos de las tareas comprobados en el servidor",
+        "texto": "Un miembro puede mover tareas entre Pendiente, En progreso y En revisión, pero solo el jefe o un supervisor del equipo dueño del proyecto puede pasarlas a Finalizado o borrarlas. La API responde con un 403 y el motivo, y el tablero aplica la misma regla, así que la tarjeta se queda en su columna si no tienes permiso. Los listados de proyectos y tareas solo devuelven lo de los proyectos de tus equipos, y el historial solo incluye la actividad de tus compañeros de equipo."
+      },
+      {
+        "titulo": "Dashboard con el resumen del trabajo",
+        "texto": "La página de inicio cuenta los proyectos activos, las tareas creadas en los últimos 7 días, las que vencen en los próximos 7 días y las urgentes sin terminar que están asignadas al usuario o no tienen responsable. Estos números los calculo en el navegador con los proyectos y tareas que devuelve la API. Debajo hay un gráfico de anillo por estado, la lista de mis tareas, la actividad reciente y un gráfico de barras con el porcentaje completado de los proyectos."
+      },
+      {
+        "titulo": "Notificaciones e historial de actividad",
+        "texto": "El servidor avisa al responsable de una tarea cuando se la asignan, cuando cambia de estado y cuando alguien comenta en ella, y no le avisa de sus propias acciones. Crear, mover, completar o eliminar una tarea, crear un proyecto, un sprint o un equipo, e invitar a alguien quedan guardados en un historial que alimenta la actividad reciente del dashboard."
+      },
+      {
+        "titulo": "Panel de administración en /admin",
+        "texto": "Aparte de la SPA, el backend sirve un panel hecho con EJS para gestionar los datos directamente: 11 secciones (usuarios, equipos, proyectos, sprints, tareas, subtareas, comentarios, adjuntos, etiquetas, notificaciones e historial), cada una con listado paginado, búsqueda, alta, edición y borrado."
+      }
+    ],
+    "construccion": [
+      "El repositorio es un monorepo con dos carpetas. backend/ es una API REST en Node.js y Express organizada en rutas, controladores y utilidades: 13 grupos de rutas bajo /api con 69 endpoints, más un /api/health. Un middleware verifica el JWT de la cabecera Authorization en todos salvo el registro, el login y el health. Las contraseñas se guardan con bcrypt. En las rutas de auth, proyectos, tareas, sprints, subtareas y comentarios, el cuerpo de la petición pasa por esquemas de Zod que responden con un 400 y la lista de campos incorrectos. frontend/ es una SPA en React 19 con Vite, React Router y Tailwind CSS 4, y todas las llamadas a la API pasan por un único api.js que añade el token y unifica el manejo de errores.",
+      "Los datos están en PostgreSQL y los gestiono con Prisma: 14 modelos y 5 migraciones. Las relaciones de muchos a muchos tienen su propia tabla con clave compuesta: EquipoUsuario guarda el rol de cada persona en el equipo y si su invitación está pendiente o aceptada, ProyectoEquipo une cada proyecto con los equipos que colaboran y TareaEtiqueta asigna las etiquetas. Al borrar un proyecto se eliminan en cascada sus sprints y tareas, y con ellas las subtareas, comentarios y adjuntos. En los esquemas de Zod distingo entre un campo que no llega (no se toca) y uno que llega vacío (se borra), para que desde el modal se pueda quitar el responsable o la fecha de una tarea.",
+      "Las comprobaciones de acceso a proyectos y tareas están en utils/permissions.js. Middlewares como requireProjectAccess y requireTaskAccess cargan el recurso, comprueban que el usuario es miembro aceptado de alguno de los equipos del proyecto y dejan en la petición el proyecto y el rol calculado (req.myProjectRole). Así los controladores de proyectos y tareas solo tienen que decidir qué puede hacer cada rol. El administrador global se marca con un booleano esAdmin en el usuario y estas comprobaciones le dejan pasar siempre.",
+      "Para tener datos de prueba escribí un seeder con Faker que crea 150 usuarios más el administrador, 16 equipos, 25 proyectos con 3 sprints cada uno y 300 tareas con subtareas, comentarios, adjuntos y etiquetas. Si la base de datos ya tiene datos, el seeder no hace nada para no duplicarlos. Cada parte tiene su Dockerfile: el del backend aplica las migraciones y el seed al arrancar, y el del frontend compila con Vite y sirve el resultado con Nginx."
+    ],
+    "retos": [
+      {
+        "titulo": "Cambiar el modelo de roles con migraciones",
+        "texto": "Al principio había una tabla Rol global enlazada desde el usuario, y luego añadí roles por proyecto en ProyectoUsuario, además del rol de cada persona en su equipo. Lo simplifiqué con una migración que elimina Rol y ProyectoUsuario, deja un único rol por equipo (jefe, supervisor o miembro) y añade el booleano esAdmin. Más tarde los proyectos pasaron a admitir varios equipos: creé la tabla ProyectoEquipo y añadí a mano en la migración un INSERT ... SELECT que registra el equipo dueño de cada proyecto existente, para que nadie perdiera el acceso a los proyectos que ya tenía."
+      },
+      {
+        "titulo": "Cerrar el acceso a tareas y proyectos ajenos por id",
+        "texto": "Las primeras rutas solo comprobaban que el token era válido, así que cambiando el id en la URL se podía leer o editar una tarea de otro proyecto. Lo resolví con cuatro middlewares que cargan el proyecto o la tarea, ya sea por el id de la ruta o por el que llega en el cuerpo al crear tareas, sprints, comentarios, subtareas o adjuntos, y responden 403 si el usuario no pertenece a ninguno de sus equipos."
+      },
+      {
+        "titulo": "Arrastrar sin perder el clic",
+        "texto": "Cada tarjeta tiene que poder arrastrarse y también abrirse con un clic. Configuré el PointerSensor de dnd-kit para que el arrastre empiece a partir de 6 píxeles de movimiento, así un clic normal abre la tarea. Uso un DragOverlay para la copia que sigue al cursor y aplico el cambio de estado de forma optimista, recargando los datos del servidor si la petición falla."
+      }
+    ],
+    "aprendizaje": "Me llevo dos ideas: las reglas de negocio van en el servidor, con la interfaz como segunda capa, y un esquema que ya tiene datos se cambia con migraciones. Esto último lo aprendí por las malas: una vez añadí columnas a schema.prisma sin generar la migración y la API empezó a devolver errores 500 hasta que la creé. También practiqué con dnd-kit para el arrastre y con Chart.js para las gráficas. Si siguiera con el proyecto, protegería el panel /admin con el mismo inicio de sesión que la aplicación, revisaría los permisos de las rutas que todavía no los comprueban y añadiría tests a la API.",
+    "cifras": [
+      {
+        "etiqueta": "Endpoints de la API",
+        "valor": "69",
+        "nota": "en 13 grupos de rutas"
+      },
+      {
+        "etiqueta": "Modelos en Prisma",
+        "valor": "14",
+        "nota": "con 5 migraciones"
+      },
+      {
+        "etiqueta": "Componentes de React",
+        "valor": "44",
+        "nota": "en archivos .jsx"
+      },
+      {
+        "etiqueta": "Secciones del panel de administración",
+        "valor": "11",
+        "nota": "con alta, edición y borrado"
+      }
+    ],
     "repo": "https://github.com/NicoOmegaPro/Noir",
-    "destacado": true
+    "demo": "",
+    "portada": {
+      "src": "/imagenes/proyectos/noir/02-proyecto-kanban.webp",
+      "ancho": 1600,
+      "alto": 1000
+    },
+    "galeria": [
+      {
+        "src": "/imagenes/proyectos/noir/01-dashboard.webp",
+        "pie": "Dashboard con datos de prueba: proyectos activos, tareas creadas en los últimos 7 días, tareas que vencen en los próximos 7 días y urgentes, con el reparto por estado, la lista Mis tareas y la actividad reciente del equipo.",
+        "movil": false,
+        "ancho": 1600,
+        "alto": 1000,
+        "src960": "/imagenes/proyectos/noir/01-dashboard-960.webp"
+      },
+      {
+        "src": "/imagenes/proyectos/noir/02-proyecto-kanban.webp",
+        "pie": "Vista de un proyecto: cabecera con el progreso y el botón de equipos, filtros por sprint, texto, prioridad y responsable, gráficas por prioridad y por estado, y el inicio del tablero Kanban.",
+        "movil": false,
+        "ancho": 1600,
+        "alto": 1000,
+        "src960": "/imagenes/proyectos/noir/02-proyecto-kanban-960.webp"
+      },
+      {
+        "src": "/imagenes/proyectos/noir/03-arrastre.webp",
+        "pie": "Arrastrando una tarea de Pendiente a En progreso: la tarjeta deja su hueco en la columna de origen, una copia sigue al cursor y la columna de destino se marca con un borde.",
+        "movil": false,
+        "ancho": 1600,
+        "alto": 1000,
+        "src960": "/imagenes/proyectos/noir/03-arrastre-960.webp"
+      },
+      {
+        "src": "/imagenes/proyectos/noir/04-detalle-tarea.webp",
+        "pie": "Detalle de una tarea: descripción, subtareas con barra de progreso, un adjunto con miniatura, el campo para comentar y el panel lateral con estado, prioridad, etiquetas, responsable, sprint y vencimiento.",
+        "movil": false,
+        "ancho": 1600,
+        "alto": 1000,
+        "src960": "/imagenes/proyectos/noir/04-detalle-tarea-960.webp"
+      },
+      {
+        "src": "/imagenes/proyectos/noir/05-equipos.webp",
+        "pie": "Equipo desplegado visto desde la cuenta del jefe: cada miembro tiene un selector de rol (Miembro o Supervisor) y un botón para expulsarlo, y arriba está el botón Invitar.",
+        "movil": false,
+        "ancho": 1600,
+        "alto": 1000,
+        "src960": "/imagenes/proyectos/noir/05-equipos-960.webp"
+      },
+      {
+        "src": "/imagenes/proyectos/noir/06-notificaciones.webp",
+        "pie": "Desplegable de notificaciones: una invitación pendiente a un equipo con los botones Aceptar y Rechazar, y debajo avisos de un comentario, un cambio de estado y una asignación.",
+        "movil": false,
+        "ancho": 1600,
+        "alto": 1000,
+        "src960": "/imagenes/proyectos/noir/06-notificaciones-960.webp"
+      },
+      {
+        "src": "/imagenes/proyectos/noir/07-admin-tareas.webp",
+        "pie": "Panel de administración renderizado en el servidor con EJS: menú con las 11 secciones, buscador y tabla de tareas con botones para editar y borrar.",
+        "movil": false,
+        "ancho": 1600,
+        "alto": 1000,
+        "src960": "/imagenes/proyectos/noir/07-admin-tareas-960.webp"
+      },
+      {
+        "src": "/imagenes/proyectos/noir/08-login-movil.webp",
+        "pie": "Inicio de sesión en móvil: por debajo de 1024 px se oculta el panel de presentación y queda el logo encima del formulario.",
+        "movil": true,
+        "ancho": 640,
+        "alto": 1385
+      }
+    ]
   },
   {
-    "id": 2,
-    "title": "BalearTrek",
-    "tech": "React · Laravel · PHP · Bootstrap · Tailwind CSS",
-    "description": "Aplicación para descubrir rutas de senderismo por las Islas Baleares y apuntarse a quedadas. Incluye una API REST con autenticación por tokens y un panel de administración.",
-    "image": "/imagenes/baleartrek.jpg",
-    "alt": "Logotipo de BalearTrek",
+    "slug": "baleartrek",
+    "titulo": "BalearTrek",
+    "destacado": true,
+    "lema": "Rutas de senderismo por Baleares con quedadas, inscripciones y valoraciones",
+    "anio": "2026",
+    "tipo": "Proyecto del ciclo (CFGS DAW)",
+    "papel": "Individual: base de datos, API REST en Laravel, panel de administración y frontend en React",
+    "tecnologias": [
+      "React 19",
+      "Vite",
+      "React Router",
+      "Bootstrap 5",
+      "Axios",
+      "Laravel 12",
+      "PHP 8.2",
+      "Laravel Sanctum",
+      "Laravel Breeze",
+      "Blade",
+      "Tailwind CSS",
+      "MySQL",
+      "Formspree"
+    ],
+    "resumen": "Aplicación web para consultar rutas de senderismo de las Islas Baleares y apuntarse a quedadas con guía. Tiene una API REST en Laravel 12 con autenticación por tokens (Sanctum), un panel de administración en Blade y un frontend en React 19 que consume la API.",
+    "contexto": "Simula una plataforma de excursiones: los visitantes buscan rutas por isla, zona o municipio, ven sus lugares de interés y se apuntan a quedadas que dirige un guía. Los guías ven quién va a sus salidas y el administrador gestiona el contenido y modera los comentarios desde un panel aparte. Las zonas, municipios, lugares de interés, rutas, quedadas y guías los cargo con seeders que leen ficheros JSON. Las islas van escritas en su seeder, y los visitantes, comentarios e imágenes de prueba salen de factories.",
+    "funciones": [
+      {
+        "titulo": "Catálogo con filtros y scroll infinito",
+        "texto": "El buscador filtra por nombre o por código de registro, porque la API busca en los dos campos, y por un rango de fechas de las quedadas. En la barra lateral se filtra por isla, zona y municipio, y el desplegable de municipios solo muestra los de la isla y la zona elegidas. Las rutas se pueden ordenar por nombre, por nota o por popularidad. La lista pide a la API páginas de 12 rutas y carga la siguiente con un IntersectionObserver al llegar al final."
+      },
+      {
+        "titulo": "Ficha de cada ruta",
+        "texto": "Muestra el código de registro (T01, T02...), el municipio, la isla, la zona, la nota media y los lugares de interés en su orden, con su tipo y sus coordenadas GPS. Debajo aparecen las quedadas con el guía, la fecha y si la inscripción está abierta, y los comentarios ya validados con sus fotos."
+      },
+      {
+        "titulo": "Inscripción a quedadas",
+        "texto": "Cada quedada tiene 20 plazas y una barra de ocupación que pasa a amarillo al 70 % y a rojo al 90 %. La inscripción abre un mes antes de la fecha y cierra una semana antes. Los botones de inscribirse y cancelar solo aparecen si la API devuelve can_register o can_cancel_registration a true."
+      },
+      {
+        "titulo": "Valoraciones con fotos y moderación",
+        "texto": "Si estás inscrito en una quedada puedes puntuarla de 0 a 5, escribir un comentario y adjuntar hasta 5 imágenes (jpg, png o webp, de 4 MB como máximo), que envío con FormData. El comentario entra como pendiente y no aparece en la web ni cuenta para la media hasta que el administrador lo valida."
+      },
+      {
+        "titulo": "Cuentas con tokens y perfil",
+        "texto": "El registro y el inicio de sesión devuelven un token de Laravel Sanctum. En el perfil se editan los datos y la contraseña, y se ven las quedadas a las que estás apuntado y tus comentarios con su estado. Desactivar la cuenta la marca como inactiva y borra sus tokens, y la API rechaza el login de una cuenta inactiva."
+      },
+      {
+        "titulo": "Vista para guías",
+        "texto": "Hay tres roles: administrador, guía y visitante (en la base de datos se llaman admin, guia y visitant). En su perfil, un guía ve las quedadas que lleva, si es el responsable o solo está asignado, y la lista de excursionistas inscritos en cada una."
+      },
+      {
+        "titulo": "Panel de administración",
+        "texto": "Lo hice con Blade y Tailwind sobre el login de Laravel Breeze, y lo protege un middleware que solo deja pasar al rol admin. Tiene CRUD de usuarios, rutas, quedadas, lugares de interés y municipios, y una sección para validar comentarios. En cada quedada se elige si la inscripción sigue la regla automática o se fuerza abierta o cerrada."
+      }
+    ],
+    "construccion": [
+      "Es un monorepo con dos carpetas. El backend es un Laravel 12 con dos partes: una API REST de 23 endpoints en routes/api.php, que es la que usa React, y un panel de administración con 6 controladores de recurso y vistas Blade. El frontend es React 19 con Vite, React Router 7 y Bootstrap 5, y habla con la API mediante Axios.",
+      "El modelo de datos tiene 11 modelos Eloquent. Las islas y las zonas agrupan municipios, y cada ruta pertenece a un municipio y se une a sus lugares de interés con una tabla pivote que guarda el orden. Una quedada pertenece a una ruta y a un guía principal, y la tabla meeting_user guarda a la vez guías y participantes: los separo con dos relaciones que filtran por rol con whereHas. Los comentarios cuelgan de la quedada y la ruta los obtiene con hasManyThrough. El código de registro de una ruta nueva (una T y el siguiente id con dos cifras) lo genero en el evento creating del modelo.",
+      "La regla de inscripción está en el modelo Meeting: une la fecha y la hora de la quedada, abre la ventana un mes antes y la cierra una semana antes. effectiveRegistrationOpen() mira primero si hay un valor manual y, si no lo hay, aplica esa ventana. La nota de cada quedada la mantienen tres triggers SQL en la migración de comentarios. Suman o restan en totalScore y countScore al insertar, validar, rechazar o borrar un comentario, y el de actualización lanza un error si alguien intenta cambiar la puntuación de un comentario ya creado.",
+      "En React centralicé las llamadas en un cliente Axios con un interceptor que añade el token Bearer guardado en localStorage, y las agrupé en cuatro servicios (auth, treks, meetings e info). Un AuthContext restaura la sesión al cargar la página llamando a /auth/me. Para los errores, un mapa traduce al castellano 17 mensajes de la API, y extractApiError() muestra ese mensaje o, si no viene, el primer error de validación de Laravel."
+    ],
+    "retos": [
+      {
+        "titulo": "Ventana de inscripción con excepción manual",
+        "texto": "La inscripción se abre y se cierra sola según la fecha, pero el administrador también tenía que poder abrir o cerrar una quedada a mano. En otra migración añadí la columna registration_override, que puede ser nula (se aplica la regla automática), verdadera o falsa, y en los formularios de quedadas del panel puse un selector con esas tres opciones. La API devuelve el estado final y los permisos del usuario, así React no tiene que calcular la ventana."
+      },
+      {
+        "titulo": "Reglas de negocio en el servidor",
+        "texto": "Las reglas las comprueba la API, no React: solo los visitantes se apuntan o comentan, hay un máximo de 20 plazas, apuntarse dos veces devuelve un 409 y para comentar hay que estar inscrito. Todas las claves foráneas son restrictivas, así que en el panel eliminar un usuario solo lo desactiva y eliminar un comentario lo deja como no validado. Para borrar una ruta, un municipio o una quedada, el controlador elimina antes a mano sus comentarios, imágenes e inscripciones."
+      },
+      {
+        "titulo": "Triggers que solo funcionan en MySQL",
+        "texto": "Guardo la nota de cada quedada en dos columnas que actualizan los triggers, para no recalcularla en cada petición. Los escribí con sintaxis de MySQL (IF y SIGNAL), así que la migración de comentarios no funciona en SQLite y el proyecto necesita MySQL."
+      }
+    ],
+    "aprendizaje": "Lo que más me enseñó fue montar en un mismo Laravel una API con tokens de Sanctum para React y un panel con sesiones de Breeze para el administrador, cada uno con sus rutas y su middleware. También vi que, si la API devuelve campos ya calculados como can_register, React solo tiene que decidir qué botón enseña. Y con los triggers comprobé que mantienen la media al día, pero atan la base de datos a un motor concreto.",
+    "cifras": [
+      {
+        "etiqueta": "Endpoints de la API",
+        "valor": "23",
+        "nota": "en routes/api.php"
+      },
+      {
+        "etiqueta": "Modelos Eloquent",
+        "valor": "11",
+        "nota": ""
+      },
+      {
+        "etiqueta": "Páginas de React",
+        "valor": "10",
+        "nota": ""
+      },
+      {
+        "etiqueta": "Secciones del panel",
+        "valor": "6",
+        "nota": "de administración"
+      }
+    ],
     "repo": "https://github.com/NicoOmegaPro/BalearTrek",
-    "destacado": true
+    "demo": "",
+    "portada": {
+      "src": "/imagenes/proyectos/baleartrek/01-inicio.webp",
+      "ancho": 1600,
+      "alto": 1406
+    },
+    "galeria": [
+      {
+        "src": "/imagenes/proyectos/baleartrek/01-inicio.webp",
+        "pie": "Página de inicio con el carrusel, el buscador por texto y fechas y las cuatro rutas destacadas, ordenadas por nota media.",
+        "movil": false,
+        "ancho": 1600,
+        "alto": 1406,
+        "src960": "/imagenes/proyectos/baleartrek/01-inicio-960.webp"
+      },
+      {
+        "src": "/imagenes/proyectos/baleartrek/02-catalogo.webp",
+        "pie": "Catálogo ordenado por «Mejor puntuadas», con los filtros de isla, zona y municipio en la barra lateral y la nota, los comentarios y las quedadas de cada ruta.",
+        "movil": false,
+        "ancho": 1600,
+        "alto": 1000,
+        "src960": "/imagenes/proyectos/baleartrek/02-catalogo-960.webp"
+      },
+      {
+        "src": "/imagenes/proyectos/baleartrek/03-ficha-ruta.webp",
+        "pie": "Ficha de la ruta T03 con municipio, isla, zona y nota media, sus lugares de interés con tipo y coordenadas GPS y el inicio de la lista de quedadas con su estado de inscripción.",
+        "movil": false,
+        "ancho": 1600,
+        "alto": 1000,
+        "src960": "/imagenes/proyectos/baleartrek/03-ficha-ruta-960.webp"
+      },
+      {
+        "src": "/imagenes/proyectos/baleartrek/04-quedada-inscripcion.webp",
+        "pie": "Detalle de una quedada con la sesión de un visitante: guía responsable, 10 de 20 plazas ocupadas, fechas de apertura y cierre de la inscripción y botón para inscribirse.",
+        "movil": false,
+        "ancho": 1600,
+        "alto": 1352,
+        "src960": "/imagenes/proyectos/baleartrek/04-quedada-inscripcion-960.webp"
+      },
+      {
+        "src": "/imagenes/proyectos/baleartrek/05-valorar-quedada.webp",
+        "pie": "Con la inscripción hecha aparecen el botón para cancelarla y el formulario para valorar la quedada con una nota de 0 a 5, un comentario y hasta 5 imágenes.",
+        "movil": false,
+        "ancho": 1600,
+        "alto": 1000,
+        "src960": "/imagenes/proyectos/baleartrek/05-valorar-quedada-960.webp"
+      },
+      {
+        "src": "/imagenes/proyectos/baleartrek/06-perfil-guia.webp",
+        "pie": "Perfil de un guía: en cada quedada que lleva se ve si la inscripción está abierta, si es el guía responsable y la lista de excursionistas inscritos.",
+        "movil": false,
+        "ancho": 1600,
+        "alto": 1000,
+        "src960": "/imagenes/proyectos/baleartrek/06-perfil-guia-960.webp"
+      },
+      {
+        "src": "/imagenes/proyectos/baleartrek/07-perfil-visitante.webp",
+        "pie": "Perfil de un visitante con las quedadas a las que está apuntado y sus comentarios, uno pendiente (Pendent) y otro validado (Validat).",
+        "movil": false,
+        "ancho": 1600,
+        "alto": 1000,
+        "src960": "/imagenes/proyectos/baleartrek/07-perfil-visitante-960.webp"
+      },
+      {
+        "src": "/imagenes/proyectos/baleartrek/08-movil-ficha.webp",
+        "pie": "Ficha de ruta en móvil: los datos pasan a dos columnas con la rejilla de Bootstrap.",
+        "movil": true,
+        "ancho": 640,
+        "alto": 1385
+      }
+    ]
   },
   {
-    "id": 3,
-    "title": "Panel de gestión en PHP",
-    "tech": "PHP · MySQL · HTML5 · CSS3",
-    "description": "Panel de administración para gestionar la base de datos de una empresa: empleados, departamentos, clientes, productos y pedidos, con listados, altas, ediciones y bajas.",
-    "image": "/imagenes/nicolaudatabase.jpg",
-    "alt": "Captura del panel de gestión en PHP"
+    "slug": "panel-php",
+    "titulo": "Panel de gestión en PHP",
+    "destacado": false,
+    "lema": "Panel CRUD en PHP sin framework para 9 tablas MySQL de empleados, clientes y pedidos",
+    "anio": "2025",
+    "tipo": "Proyecto de clase",
+    "papel": "Individual: los 9 modelos, las 45 páginas de gestión y la hoja de estilos",
+    "tecnologias": [
+      "PHP 8",
+      "MySQL (mysqli)",
+      "Composer",
+      "Carbon",
+      "Bootstrap 4",
+      "Font Awesome 4",
+      "HTML5",
+      "CSS3"
+    ],
+    "resumen": "Proyecto de clase del bloque de PHP del CFGS DAW: un panel para consultar y modificar las tablas de los esquemas de ejemplo HR y OE (empleados, departamentos, clientes, productos, pedidos y otras) cargadas en MySQL. Lo hice en PHP sin framework, con una clase de modelo por tabla y sentencias preparadas de mysqli para guardar y borrar.",
+    "contexto": "Lo entregué en noviembre de 2025 por GitHub Classroom como proyecto del bloque 1 de PHP en el IES Emili Darder. Es un ejercicio para practicar el acceso a datos y el tratamiento de formularios en el servidor: listar, ver, crear, editar y borrar registros. Trabajo con las tablas de los esquemas de ejemplo HR (recursos humanos) y OE (pedidos) cargadas en MySQL.",
+    "funciones": [
+      {
+        "titulo": "CRUD de 9 tablas",
+        "texto": "Cada tabla (employees, departments, jobs, locations, regions, countries, customers, product_information y orders) tiene cinco páginas: listado, detalle, alta, edición y baja. El listado pinta los registros en una tabla de Bootstrap con iconos para ver, editar y borrar cada fila, y un + en la cabecera para crear uno nuevo."
+      },
+      {
+        "titulo": "Formularios procesados en el servidor",
+        "texto": "Cada formulario se envía al mismo archivo PHP que lo pinta. En 8 de las 9 páginas de edición compruebo que el campo obligatorio no llegue vacío (por ejemplo, nombre y apellidos en empleados y clientes) y, en empleados, que el salario sea numérico. Si falla, el campo se marca en rojo con su mensaje. Antes de guardar convierto en NULL los campos opcionales que llegan vacíos. En clientes, el gestor de cuenta se elige en un desplegable que relleno con Employee::all()."
+      },
+      {
+        "titulo": "Borrado con confirmación",
+        "texto": "La página de baja pide confirmación con un Yes/No antes de borrar. Si el DELETE falla, por ejemplo porque otra tabla usa ese registro como clave ajena, el modelo hace rollback y la página muestra un aviso en lugar del error de PHP."
+      },
+      {
+        "titulo": "Login y menú por esquemas",
+        "texto": "Se entra por un formulario de login que comprueba el usuario contra un array de usuarios de prueba en login.php y lo guarda en la sesión de PHP. El menú lateral, común a todas las páginas, agrupa las tablas en dos bloques: HR (6 tablas) y OE (3)."
+      }
+    ],
+    "construccion": [
+      "No usé framework. Hay una clase base Model y 9 modelos que heredan de ella, uno por tabla. Model::all() hace un SELECT * y crea cada objeto con new static(...), pasando los valores de la fila al constructor; los modelos declaran sus columnas con propiedades promovidas de PHP 8. save() lee las columnas con SHOW COLUMNS y la clave primaria con SHOW KEYS, y monta un INSERT ... ON DUPLICATE KEY UPDATE con sentencia preparada, así que el mismo método sirve para el alta y para la edición. destroy() comprueba con otra consulta preparada que el registro existe y después lo borra.",
+      "La clase Database abre la conexión con mysqli, lee las credenciales de un fichero clave=valor que está fuera del proyecto y desactiva el autocommit. save() y destroy() terminan con commit, o con rollback si mysqli lanza una excepción. Todas las páginas incluyen el mismo header, navbar y footer. Usé Composer con autoload PSR-4 sobre src/, Carbon para formatear la fecha de contratación en el listado de empleados, Bootstrap 4 y Font Awesome para tablas, formularios e iconos, y una hoja de estilos propia con variables CSS para la paleta morada."
+    ],
+    "retos": [
+      {
+        "titulo": "Sacar el SQL de las páginas",
+        "texto": "En la primera versión, 28 páginas (los listados, las de detalle, las de edición y el alta de clientes) abrían su propia conexión y escribían su consulta. En los dos commits siguientes, primero en empleados y luego en el resto de tablas, lo cambié por Model::all() y los métodos save() y destroy() de los modelos. Ahora ninguna de las 45 páginas escribe SQL."
+      },
+      {
+        "titulo": "Campos vacíos y claves ajenas",
+        "texto": "Un formulario HTML envía cadenas vacías, y MySQL las rechaza en columnas DECIMAL, DATE o de clave ajena. Lo resolví convirtiendo en NULL los campos opcionales vacíos antes de llamar a save(). En las bajas, si MySQL rechaza el DELETE, capturo la excepción y aviso de que el registro se usa en otra tabla."
+      }
+    ],
+    "aprendizaje": "Separar el acceso a datos de las páginas no necesita un framework: me bastó una clase por tabla con sentencias preparadas y transacciones de mysqli. Lo que cambiaría ahora: mover save() y destroy() a la clase Model, porque están repetidos en los 9 modelos, y añadir un find() para no cargar la tabla entera al buscar un registro por su id.",
+    "cifras": [
+      {
+        "etiqueta": "Tablas con CRUD",
+        "valor": "9",
+        "nota": "de los esquemas HR y OE"
+      },
+      {
+        "etiqueta": "Páginas de gestión",
+        "valor": "45",
+        "nota": "cinco por tabla"
+      },
+      {
+        "etiqueta": "Páginas con SQL propio",
+        "valor": "28 / 0",
+        "nota": "en la primera versión y en la final"
+      }
+    ],
+    "repo": "",
+    "demo": "",
+    "portada": {
+      "src": "/imagenes/proyectos/panel-php/captura.webp",
+      "ancho": 1246,
+      "alto": 698,
+      "foco": "left top"
+    },
+    "galeria": [
+      {
+        "src": "/imagenes/proyectos/panel-php/captura.webp",
+        "pie": "Listado de empleados del esquema HR, con los iconos para ver, editar y borrar cada fila y el menú lateral agrupado en HR y OE.",
+        "movil": false,
+        "ancho": 1246,
+        "alto": 698
+      }
+    ]
   },
   {
-    "id": 4,
-    "title": "Tienda de zapatillas",
-    "tech": "React · HTML5 · CSS3",
-    "description": "Tienda online de zapatillas con un diseño moderno que avisa cuando un producto se queda sin stock.",
-    "image": "/imagenes/tiendazapas.jpg",
-    "alt": "Captura de la tienda online de zapatillas",
-    "repo": "https://github.com/NicoOmegaPro/ReactExercises/tree/main/react2(TiendaZapatos)"
+    "slug": "tienda-zapatillas",
+    "titulo": "Tienda de zapatillas",
+    "destacado": false,
+    "lema": "Tres tarjetas de zapatillas en React que cambian según el stock, el precio y si son novedad",
+    "anio": "2025",
+    "tipo": "Ejercicio de clase",
+    "papel": "Individual: componentes Header y Card, datos en data.js y la lógica de las tarjetas",
+    "tecnologias": [
+      "React",
+      "Vite",
+      "JavaScript (JSX)",
+      "CSS"
+    ],
+    "resumen": "Ejercicio de clase de React en el que pasé a componentes la maqueta HTML de una tienda de zapatillas. Los productos salen de un array en data.js y cada tarjeta muestra una cosa u otra según sus props: la imagen de agotado si el stock es menor de 45, la etiqueta 30% OFF si el precio pasa de 200 € y la insignia New si el producto es de la nueva colección.",
+    "contexto": "Segundo ejercicio de la serie de React del curso, pensado para practicar componentes y props. Es una sola página con tres productos de ejemplo escritos en un archivo JavaScript, sin estado ni backend.",
+    "funciones": [
+      {
+        "titulo": "Tarjetas generadas con map",
+        "texto": "App recorre el array de data.js con map y pinta una Card por zapatilla, con el id como key. A cada tarjeta le paso por props el nombre, el precio, la descripción, el stock, si es novedad y sus imágenes."
+      },
+      {
+        "titulo": "Imagen de agotado según el stock",
+        "texto": "Si el stock de un producto es menor de 45, la tarjeta cambia la foto de la zapatilla por una imagen de Sold out. Con los datos de ejemplo salen agotadas la Nike y la Reebok, que tienen 40 unidades."
+      },
+      {
+        "titulo": "Etiqueta de oferta",
+        "texto": "Si el precio pasa de 200 €, aparece el texto 30% OFF al lado del precio. Es solo la etiqueta: el precio no se recalcula. Con los datos de ejemplo solo la lleva la Nike, que cuesta 325 €."
+      },
+      {
+        "titulo": "Insignia de novedad",
+        "texto": "Si newCollection es true, la tarjeta muestra una estrella y el texto New sobre la esquina superior izquierda de la imagen. La llevan la Nike y la Adidas."
+      }
+    ],
+    "construccion": [
+      "Creé el proyecto con la plantilla de React de Vite (React 19 y Vite 7). Partí de una maqueta en HTML estático (src/assets/zapatos.html) con las tres tarjetas ya maquetadas y la dividí en dos componentes: Header, con el gif animado de un cohete y el nombre Rocket store, y Card, para cada producto. Mantuve las clases de la maqueta, y los estilos de App.css y Card.css son los mismos que traía. Los datos están en src/assets/data/data.js como un array de objetos; no hay API ni base de datos.",
+      "La lógica de la tarjeta está en el JSX de Card con renderizado condicional: un ternario elige entre la foto del producto y la de agotado, y dos condiciones con && muestran la insignia New y la etiqueta de oferta. Las imágenes están en public/images y la rejilla de productos es un CSS Grid de tres columnas (grid-template-columns: auto auto auto)."
+    ],
+    "retos": [
+      {
+        "titulo": "De HTML repetido a un solo componente",
+        "texto": "La maqueta repetía tres veces el mismo bloque article con los textos fijos. Para quedarme con un único componente Card tuve que ver qué cambiaba de una tarjeta a otra (el nombre, el precio, la imagen y si salía la etiqueta de oferta) y pasarlo a props. Lo que en la maqueta estaba escrito a mano, como qué zapatilla sale agotada o cuál lleva oferta, ahora depende de los datos de cada producto."
+      }
+    ],
+    "aprendizaje": "Aquí entendí cuándo usar un ternario, si hay dos versiones de algo (la foto o la de agotado), y cuándo &&, si algo solo se enseña o se oculta (la insignia New o la oferta). Me queda pendiente que la rejilla se adapte al móvil y cambiar las rutas de las imágenes a /images para que funcionen después del build.",
+    "cifras": [],
+    "repo": "https://github.com/NicoOmegaPro/ReactExercises/tree/main/react2(TiendaZapatos)",
+    "demo": "",
+    "portada": {
+      "src": "/imagenes/proyectos/tienda-zapatillas/portada.webp",
+      "ancho": 900,
+      "alto": 563
+    },
+    "galeria": [
+      {
+        "src": "/imagenes/proyectos/tienda-zapatillas/01-catalogo-escritorio.webp",
+        "pie": "La página completa: el cohete y el título Rocket store arriba, y las tres tarjetas que App pinta con map a partir de data.js. La Nike y la Reebok, con 40 unidades, salen con la imagen de agotado; la Adidas, con 50, enseña la foto del producto.",
+        "movil": false,
+        "ancho": 1600,
+        "alto": 1000,
+        "src960": "/imagenes/proyectos/tienda-zapatillas/01-catalogo-escritorio-960.webp"
+      },
+      {
+        "src": "/imagenes/proyectos/tienda-zapatillas/02-tarjeta-nike-agotada.webp",
+        "pie": "La tarjeta de la Nike, la única en la que se cumplen las tres condiciones: 40 unidades (imagen de agotado), newCollection a true (estrella y New) y 325 € (etiqueta 30% OFF).",
+        "movil": false,
+        "ancho": 930,
+        "alto": 1298
+      }
+    ]
   },
   {
-    "id": 5,
-    "title": "Blog de viajes",
-    "tech": "React · HTML5 · CSS3",
-    "description": "Blog de viajes con un diseño cuidado y secciones de contacto y «sobre nosotros».",
-    "image": "/imagenes/blogviaje.jpg",
-    "alt": "Captura del blog de viajes",
-    "repo": "https://github.com/NicoOmegaPro/ReactExercises/tree/main/react3(BlogViajes)"
+    "slug": "blog-viajes",
+    "titulo": "Blog de viajes",
+    "destacado": false,
+    "lema": "Maqueta de un blog de viajes pasada a componentes de React, con las entradas en un JSON y rutas con React Router",
+    "anio": "2025–2026",
+    "tipo": "Ejercicio de clase",
+    "papel": "Individual: componentes, artículos en un JSON y, en la segunda versión, rutas y carga con axios",
+    "tecnologias": [
+      "React",
+      "Vite",
+      "React Router",
+      "Axios",
+      "JavaScript",
+      "CSS3",
+      "HTML5"
+    ],
+    "resumen": "Ejercicio de clase en el que pasé una maqueta estática de un blog de viajes a React con Vite. Dividí la página en cinco componentes y las entradas salen de un archivo JSON que recorro con map y paso por props. En una segunda versión añadí React Router con cinco rutas y cargué los artículos con axios.",
+    "contexto": "Tercer ejercicio de la serie de React del curso: partir de una página que ya existía en HTML y CSS (cabecera con logo, menú, listado de entradas, barra lateral y pie) y pasarla a componentes. Los textos son lorem ipsum y, en la versión con rutas, Nosotros, Blog, Tienda y Contacto solo muestran su título.",
+    "funciones": [
+      {
+        "titulo": "De maqueta estática a componentes",
+        "texto": "Partí de una página hecha en HTML y CSS, que se conserva en src/index.html, y la dividí en cinco componentes: Header, Navbar, Entrada, Slidebar (así se llama en el código la barra lateral) y Footer. Mantuve las mismas clases y la hoja styles.css de la maqueta."
+      },
+      {
+        "titulo": "Entradas generadas desde JSON",
+        "texto": "Los artículos están en src/data/articles.json, cada uno con id, img, title y desc. App los recorre con map y pasa cada campo como prop al componente Entrada, con el id como key. Para añadir una entrada basta con añadir un objeto al JSON y su foto a public/img."
+      },
+      {
+        "titulo": "Rutas con React Router",
+        "texto": "En la segunda versión añadí react-router-dom con BrowserRouter y cinco rutas: /, /nosotros, /blog, /tienda y /contacto. Cualquier otra dirección redirige a la portada con Navigate, y el logo vuelve a la portada con Link. Las cuatro secciones secundarias son páginas de prueba que solo muestran su título."
+      },
+      {
+        "titulo": "Adaptado a móvil",
+        "texto": "Mantuve la hoja de estilos de la maqueta, que parte de móvil: el menú va en vertical y la imagen encima del texto. Una sola media query, a partir de 768 px, pone el menú en fila con flexbox, deja el 70 % del ancho para las entradas y el 30 % para la barra lateral, hace flotar la imagen a la izquierda del texto y divide el pie en dos columnas."
+      }
+    ],
+    "construccion": [
+      "Lo monté con Vite y React 19. En la primera versión, en la carpeta react3(BlogViajes), App.jsx importa articles.json directamente y compone la página con los cinco componentes de src/assets/complements. Los estilos vienen de styles.css, que se enlaza desde index.html e importa normalize.css. También siguen importados el index.css y el App.css de la plantilla de Vite, que no llegué a quitar: centran los títulos y el botón Leer Más y limitan el ancho del contenedor raíz a 1280 px.",
+      "La segunda versión está en la carpeta react3(BlogViajes) copy del mismo repositorio. Moví el listado a LandingPage y cambié el import por una petición con axios dentro de un useEffect: guardo la respuesta con useState y, si la petición falla, el try/catch escribe el error en la consola. La petición sigue apuntando al JSON local; si los artículos vinieran de una API con el mismo formato, solo cambiaría la URL. También corregí las rutas de las imágenes de ./public/img a /img, que es como Vite sirve la carpeta public."
+    ],
+    "retos": [
+      {
+        "titulo": "Rutas de archivos en Vite",
+        "texto": "En la primera versión las imágenes del JSON apuntaban a ./public/img/. El servidor de desarrollo las sirve, aunque avisa de que la carpeta public se sirve desde la raíz. Al hacer el build, Vite copia el contenido de public a la raíz de dist, así que esas rutas dejan de existir. En la segunda versión las cambié a /img/. Me queda un caso parecido: axios pide /src/data/articles.json, que solo existe con el servidor de desarrollo, así que para publicarla tendría que mover el JSON a public."
+      },
+      {
+        "titulo": "Un menú que recarga la página",
+        "texto": "El logo usa Link de React Router, pero el menú sigue con etiquetas <a> normales, así que cada clic recarga la aplicación entera en lugar de cambiar solo de ruta. Funciona porque el servidor de Vite devuelve index.html en cualquier ruta, pero lo correcto sería usar NavLink, que además permite marcar la sección activa."
+      }
+    ],
+    "aprendizaje": "Con la segunda versión practiqué React Router y la carga de datos con useEffect, useState y axios, y vi que no todo lo que sirve Vite en desarrollo acaba en el build. Me quedan dos cambios: usar NavLink en el menú y mover el JSON a la carpeta public.",
+    "cifras": [],
+    "repo": "https://github.com/NicoOmegaPro/ReactExercises/tree/main/react3(BlogViajes)",
+    "demo": "",
+    "portada": {
+      "src": "/imagenes/proyectos/blog-viajes/portada.webp",
+      "ancho": 900,
+      "alto": 434
+    },
+    "galeria": [
+      {
+        "src": "/imagenes/proyectos/blog-viajes/01-escritorio-primera-entrada.webp",
+        "pie": "Portada en escritorio: el menú en fila, la primera entrada de articles.json con la foto a la izquierda del texto y la barra lateral Otros Posts. El texto es lorem ipsum.",
+        "movil": false,
+        "ancho": 1600,
+        "alto": 771,
+        "src960": "/imagenes/proyectos/blog-viajes/01-escritorio-primera-entrada-960.webp"
+      },
+      {
+        "src": "/imagenes/proyectos/blog-viajes/02-movil-primera-entrada.webp",
+        "pie": "La misma portada a 390 px de ancho: el menú se apila en vertical y la foto pasa encima del texto.",
+        "movil": true,
+        "ancho": 640,
+        "alto": 2045
+      }
+    ]
   },
   {
-    "id": 6,
-    "title": "Interfaz de Netflix",
-    "tech": "React · HTML5 · CSS3",
-    "description": "Recreación de la interfaz de Netflix, centrada en la maquetación de componentes y los estilos con CSS.",
-    "image": "/imagenes/paginanetflix.jpg",
-    "alt": "Captura de la recreación de Netflix",
-    "repo": "https://github.com/NicoOmegaPro/ReactExercises/tree/main/react(Netflix)"
+    "slug": "netflix",
+    "titulo": "Interfaz de Netflix",
+    "destacado": false,
+    "lema": "Tarjetas de títulos similares de Netflix pasadas de una maqueta HTML a componentes de React",
+    "anio": "2025",
+    "tipo": "Ejercicio de clase",
+    "papel": "Individual: componentes Card y Container, datos de las series y estilos",
+    "tecnologias": [
+      "React",
+      "Vite",
+      "JavaScript",
+      "CSS3",
+      "HTML5"
+    ],
+    "resumen": "Ejercicio de clase en el que reproduje con React y Vite la sección de títulos similares de una ficha de Netflix. Pasé una maqueta HTML con nueve tarjetas escritas a mano a dos componentes que se rellenan desde un array de datos. Practiqué componentes, props, children y renderizado condicional.",
+    "contexto": "Fue el primer ejercicio de React del curso. El modelo era la sección de títulos similares de la ficha de una serie en Netflix (la página se titula «Netflix - Stranger Things»). Es una página estática, sin estado, rutas ni API.",
+    "funciones": [
+      {
+        "titulo": "Rejilla de títulos similares",
+        "texto": "Nueve tarjetas en una rejilla de CSS Grid de tres columnas. App las genera con map a partir del array de series, usando el id como key."
+      },
+      {
+        "titulo": "Temporadas, episodios o miniserie",
+        "texto": "Arriba a la derecha cada tarjeta muestra «2 Temporadas», «1 Temporada», «8 Episodios» o «Miniserie» según el campo que tenga la serie, en singular o en plural."
+      },
+      {
+        "titulo": "Coincidencia y valoración opcionales",
+        "texto": "El porcentaje de coincidencia solo aparece si pasa del 60 % y las estrellas solo si la serie tiene valoración. Con los datos actuales la coincidencia sale en Timeless (86 %) y Gotham (89 %), y las estrellas en tres series."
+      },
+      {
+        "titulo": "Clasificación por edad con colores",
+        "texto": "La edad lleva la clase age- seguida del valor (age-7, age-12 o age-16), y cada clase tiene su color de fondo: azul, amarillo y rojo."
+      }
+    ],
+    "construccion": [
+      "Partí de una maqueta estática, src/Stranger.html, con las nueve tarjetas escritas a mano en HTML. La pasé a React con Vite: saqué los datos a un array de objetos en src/data/series-static.js (título, imagen, año, edad, coincidencia, temporadas, episodios o tipo, estrellas y descripción) y App recorre ese array con map usando el id como key.",
+      "Dividí la tarjeta en dos componentes. Card es un <article> que recibe el contenido por children, y Container recibe por props las estrellas, el año, la edad, la coincidencia y la descripción. Los estilos son CSS plano en dos hojas: styles.css tiene el reset, la fuente Netflix Sans cargada con @font-face y la rejilla, y card.css la tarjeta, los colores de cada edad y las estrellas. El icono + es de Material Icons."
+    ],
+    "retos": [
+      {
+        "titulo": "Series con datos distintos",
+        "texto": "En la maqueta cada tarjeta tenía su etiqueta escrita a mano, pero en el array no todas las series tienen los mismos campos: siete tienen temporadas, una tiene episodios, otra es miniserie y solo tres tienen valoración. Lo resolví con renderizado condicional: un ternario encadenado elige la etiqueta y pone singular o plural."
+      },
+      {
+        "titulo": "Valoración a partir de un número",
+        "texto": "En la maqueta las estrellas eran cinco div con la clase star o star-off puesta a mano. En React, Container dibuja siempre cinco div y a cada uno le pone star o star-off comparando la valoración con su posición: con un 3 salen tres amarillas y dos grises. La forma de estrella es un clip-path sobre el div, sin imágenes ni iconos."
+      }
+    ],
+    "aprendizaje": "Con este ejercicio empecé a pasar contenido con children además de con props, y a resolver con && y ternarios unas tarjetas que no tienen los mismos datos. Si lo retomara, sacaría el ternario encadenado de la etiqueta a una función y haría que la rejilla se adaptara al móvil.",
+    "cifras": [],
+    "repo": "https://github.com/NicoOmegaPro/ReactExercises/tree/main/react(Netflix)",
+    "demo": "",
+    "portada": {
+      "src": "/imagenes/proyectos/netflix/portada.webp",
+      "ancho": 900,
+      "alto": 819
+    },
+    "galeria": [
+      {
+        "src": "/imagenes/proyectos/netflix/01-rejilla.webp",
+        "pie": "Las dos primeras filas de la rejilla, seis de las nueve tarjetas. Cada una muestra temporadas, episodios o miniserie según sus datos; la coincidencia solo sale en Timeless y Gotham, y las estrellas en The Witcher y Ollie está perdido.",
+        "movil": false,
+        "ancho": 1600,
+        "alto": 1456,
+        "src960": "/imagenes/proyectos/netflix/01-rejilla-960.webp"
+      },
+      {
+        "src": "/imagenes/proyectos/netflix/03-tarjeta-hover.webp",
+        "pie": "La tarjeta de The Witcher con el ratón encima, marcada con el borde blanco de .card:hover. Las cinco estrellas amarillas son div recortados con clip-path.",
+        "movil": false,
+        "ancho": 578,
+        "alto": 800
+      }
+    ]
   },
   {
-    "id": 7,
-    "title": "Calculadora",
-    "tech": "React · HTML5 · CSS3",
-    "description": "Calculadora web con las operaciones básicas (sumar, restar, multiplicar y dividir) que funciona en cualquier navegador moderno.",
-    "image": "/imagenes/calculadorapro.jpg",
-    "alt": "Captura de la calculadora",
-    "repo": "https://github.com/NicoOmegaPro/ReactExercises/tree/main/react8(Calculadora)"
+    "slug": "calculadora",
+    "titulo": "Calculadora",
+    "destacado": false,
+    "lema": "Calculadora en React que opera con Math.js y avisa de dos operadores seguidos",
+    "anio": "2025",
+    "tipo": "Ejercicio de clase",
+    "papel": "Individual: componentes, lógica del cálculo y estilos",
+    "tecnologias": [
+      "React 19",
+      "Vite 7",
+      "Math.js",
+      "JavaScript",
+      "CSS"
+    ],
+    "resumen": "Calculadora web que hice con React y Vite como ejercicio de clase. Tiene las cuatro operaciones básicas y números decimales, resuelve la expresión con la librería Math.js y muestra un aviso si se pulsan dos operadores seguidos o si la operación no es válida.",
+    "contexto": "En este ejercicio practiqué useRef y el uso de una librería externa, Math.js, para hacer los cálculos en lugar de programarlos a mano. Es una aplicación de una sola pantalla, sin backend y sin guardar datos.",
+    "funciones": [
+      {
+        "titulo": "Teclado y visor de dos líneas",
+        "texto": "El teclado tiene 17 teclas: los números del 0 al 9, las cuatro operaciones, el punto decimal, el igual y Clear. En el visor, la línea de arriba muestra el resultado y la de abajo la expresión que voy escribiendo."
+      },
+      {
+        "titulo": "Cálculo con Math.js",
+        "texto": "Al pulsar igual, uno la expresión en un texto y se la paso a evaluate() de Math.js en lugar de usar eval. Si el resultado no es entero lo redondeo a 2 decimales como máximo, y ese resultado se queda en la línea de abajo para seguir operando con él."
+      },
+      {
+        "titulo": "Aviso de operadores seguidos",
+        "texto": "Si la tecla anterior era un operador o un punto y pulso otra de esas teclas, la segunda no se añade y aparece un aviso que se oculta solo a los 3 segundos con setTimeout."
+      },
+      {
+        "titulo": "Control de errores",
+        "texto": "El cálculo va dentro de un try/catch. Si Math.js no puede evaluar la expresión, por ejemplo si empieza por un signo de multiplicar, limpio la calculadora y muestro un mensaje de error."
+      }
+    ],
+    "construccion": [
+      "La hice con React 19 y Vite 7. App.jsx guarda el estado con tres useState (la expresión, el resultado y el aviso) y un useRef para la última tecla pulsada. La interfaz está repartida en tres componentes: Button, que recibe el símbolo, el color y la función de clic; Input, que pinta el resultado y la expresión; y Alert, para los mensajes. Button e Input tienen su propio archivo CSS, y los estilos del contenedor y del aviso están en App.css.",
+      "Mientras escribo, la expresión se guarda en el estado como un array con una entrada por tecla. Los operadores se añaden con un espacio a cada lado para que en el visor se lea 10 / 3 * 2, y antes de calcular uno el array con join y quito esos espacios con split y join. Los 16 botones del teclado se reparten en cuatro filas de cuatro con flexbox, y el botón Clear ocupa una fila entera debajo."
+    ],
+    "retos": [
+      {
+        "titulo": "Evitar expresiones mal formadas",
+        "texto": "Si se pulsan dos operadores seguidos, como en 5 * / 2, Math.js no puede evaluar la expresión, así que bloqueo la segunda tecla antes de añadirla. La comprobación solo mira la tecla anterior, así que también bloquea un menos justo después de otro operador: no se puede escribir 8 * -3, aunque Math.js sí lo calcularía. Lo que se escapa, como 1.5.3, acaba en el try/catch."
+      },
+      {
+        "titulo": "Mostrar decimales legibles",
+        "texto": "Math.js devuelve 3.3333333333333335 para 10 / 3. Usé Number.isInteger para dejar los enteros tal cual y, para el resto, toFixed(2) con parseFloat, que además quita los ceros sobrantes: 5 / 2 se muestra como 2.5 y no como 2.50."
+      }
+    ],
+    "aprendizaje": "Me sirvió para entender la diferencia entre useRef y useState: el ref guarda la última tecla sin volver a renderizar el componente. Lo siguiente sería cambiar los div de las teclas por button, para poder usarla con el teclado, y adaptar el ancho a pantallas pequeñas.",
+    "cifras": [],
+    "repo": "https://github.com/NicoOmegaPro/ReactExercises/tree/main/react8(Calculadora)",
+    "demo": "",
+    "portada": {
+      "src": "/imagenes/proyectos/calculadora/portada.webp",
+      "ancho": 800,
+      "alto": 1552
+    },
+    "galeria": [
+      {
+        "src": "/imagenes/proyectos/calculadora/02-expresion.webp",
+        "pie": "Con 10 / 3 * 2 ya escrito y antes de pulsar igual, la expresión sale en la línea de abajo del visor, con un espacio a cada lado de los operadores, y el resultado sigue en 0.",
+        "movil": false,
+        "ancho": 800,
+        "alto": 1552
+      },
+      {
+        "src": "/imagenes/proyectos/calculadora/03-resultado.webp",
+        "pie": "Al pulsar igual, Math.js resuelve 10 / 3 * 2 y el resultado se redondea a dos decimales: 6.67 aparece en las dos líneas del visor.",
+        "movil": false,
+        "ancho": 800,
+        "alto": 1552
+      },
+      {
+        "src": "/imagenes/proyectos/calculadora/04-aviso.webp",
+        "pie": "Después de escribir «8 +», pulso + otra vez: el segundo no se añade y encima del visor aparece el aviso, que se quita solo a los 3 segundos.",
+        "movil": false,
+        "ancho": 800,
+        "alto": 1784
+      }
+    ]
   },
   {
-    "id": 8,
-    "title": "Juego en Roblox",
-    "tech": "Lua · Roblox Studio",
-    "description": "Juego creado en Roblox Studio con Lua que combina las mecánicas de «The Floor is Lava» con carreras.",
-    "image": "/imagenes/imagenroblox.jpg",
-    "alt": "Captura del juego en Roblox Studio"
+    "slug": "roblox",
+    "titulo": "Juego en Roblox",
+    "destacado": false,
+    "lema": "Un juego programado en Luau dentro de Roblox Studio",
+    "anio": "",
+    "tipo": "Videojuego",
+    "papel": "",
+    "tecnologias": [
+      "Luau",
+      "Roblox Studio"
+    ],
+    "resumen": "Juego creado en Roblox Studio en Luau que combina las mecánicas de «The Floor is Lava» con carreras.",
+    "contexto": "Lo programé en Luau, el lenguaje de scripts de Roblox, que parte de Lua. En la captura se ve parte de un script del servidor: crea los RemoteEvents y RemoteFunctions que usa el cliente para equipar mascotas y comprobar si el jugador tiene un pase de juego, y prepara la carpeta de mascotas de cada jugador.",
+    "funciones": [],
+    "construccion": [],
+    "retos": [],
+    "aprendizaje": "",
+    "cifras": [],
+    "repo": "",
+    "demo": "",
+    "portada": {
+      "src": "/imagenes/proyectos/roblox/captura.webp",
+      "ancho": 690,
+      "alto": 419,
+      "foco": "left top"
+    },
+    "galeria": [
+      {
+        "src": "/imagenes/proyectos/roblox/captura.webp",
+        "pie": "Parte de un script del servidor en Luau: eventos remotos para equipar mascotas, la comprobación de un pase de juego con MarketplaceService y dos funciones auxiliares.",
+        "movil": false,
+        "ancho": 690,
+        "alto": 419
+      }
+    ]
   }
 ]
